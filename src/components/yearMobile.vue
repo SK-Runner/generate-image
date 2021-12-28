@@ -15,8 +15,14 @@ export default {
     return {
       message: '',
       number: 1,
-      image: require(`./../assets/image/pic1.png`)
+      imageIndex: 0,
+      image: require(`./../assets/year/2910175.jpg`),
+      imageArray: []
     }
+  },
+  mounted () {
+    const files = require.context('@/assets/year', false, /.jpg$/).keys()
+    this.imageArray = files.map(item => item.replace('./', ''))
   },
   methods: {
     // 渲染图片
@@ -37,34 +43,37 @@ export default {
       event.initEvent('click', true, true)
       target.dispatchEvent(event)
     },
-    save () {
-      const yearMobile = document.getElementById('yearMobile')
-      // allowTaint: true, // 不能与useCORS共用
-      const opts = {
-        logging: false,
-        scale: 2,
-        useCORS: true
-      }
-      html2canvas(yearMobile, opts).then(res => {
-        // const { height, width } = res
-        const base64 = res.toDataURL('image/png', 1)
-        this.Download(base64, 'yearMobile.png')
-        // this.Render(base64, width, height, img => {
-        //   document.body.appendChild(img)
-        //   this.Download(base64, 'yearMobile.png')
-        // })
-      }, () => alert('截图失败，请重新尝试'))
+    save (num) {
+      return new Promise((resolve, reject) => {
+        console.log('here')
+        const yearMobile = document.getElementById('yearMobile')
+        // allowTaint: true, // 不能与useCORS共用
+        const opts = {
+          logging: false,
+          scale: 1,
+          useCORS: true
+        }
+        html2canvas(yearMobile, opts).then(res => {
+          // const { height, width } = res
+          const base64 = res.toDataURL('image/png', 1)
+          this.Download(base64, `yearMobile${num}.png`)
+          resolve()
+        }, () => {
+          alert('截图失败，请重新尝试')
+          reject(new Error('ERROR'))
+        })
+      })
     },
     cycle () {
-      let interval = setInterval(() => {
-        if (this.number >= 4) {
+      var interval = setInterval(() => {
+        if (this.imageArray.length <= 0) {
           clearInterval(interval)
         } else {
-          this.image = require(`./../assets/image/pic${this.number}.png`)
-          this.number++
-          this.save()
+          let imageName = this.imageArray.pop()
+          this.image = require(`./../assets/year/${imageName}`)
+          this.save(this.imageArray.length)
         }
-      }, 2000)
+      }, 1500)
     }
   }
 }
@@ -80,10 +89,10 @@ export default {
   margin: 0 auto;
 }
 .image {
-  width: 260px;
-  height: 260px;
+  width: 275px;
+  height: 275px;
   position: absolute;
-  top: 976px;
-  left: 56px;
+  top: 990px;
+  left: 49px;
 }
 </style>
