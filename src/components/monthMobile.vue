@@ -23,7 +23,7 @@ export default {
   mounted () {
     const files = require.context('@/assets/month', false, /.jpg$/).keys()
     this.imageArray = files.map(item => item.replace('./', ''))
-    console.log(this.imageArray)
+    this.image = require(`./../assets/month/${this.imageArray[this.imageArray.length - 1]}`)
   },
   methods: {
     // 渲染图片
@@ -72,7 +72,7 @@ export default {
         } else {
           let imageName = this.imageArray.pop()
           this.image = require(`./../assets/month/${imageName}`)
-          this.save(this.imageArray.length)
+          this.save(imageName)
         }
       }, 1500)
     }

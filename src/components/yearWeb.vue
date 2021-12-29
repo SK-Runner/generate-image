@@ -23,6 +23,7 @@ export default {
   mounted () {
     const files = require.context('@/assets/year', false, /.jpg$/).keys()
     this.imageArray = files.map(item => item.replace('./', ''))
+    this.image = require(`./../assets/year/${this.imageArray[this.imageArray.length - 1]}`)
   },
   methods: {
     // 渲染图片
@@ -42,38 +43,36 @@ export default {
       const event = document.createEvent('MouseEvents')
       event.initEvent('click', true, true)
       target.dispatchEvent(event)
+      this.cycle()
     },
     save (num) {
-      return new Promise((resolve, reject) => {
-        console.log('here')
-        const yearWeb = document.getElementById('yearWeb')
-        // allowTaint: true, // 不能与useCORS共用
-        const opts = {
-          logging: false,
-          scale: 1,
-          useCORS: true
-        }
-        html2canvas(yearWeb, opts).then(res => {
-          // const { height, width } = res
-          const base64 = res.toDataURL('image/png', 1)
-          this.Download(base64, `yearWeb${num}.png`)
-          resolve()
-        }, () => {
-          alert('截图失败，请重新尝试')
-          reject(new Error('ERROR'))
-        })
+      console.log('here')
+      const yearWeb = document.getElementById('yearWeb')
+      // allowTaint: true, // 不能与useCORS共用
+      const opts = {
+        logging: false,
+        scale: 1,
+        useCORS: true
+      }
+      html2canvas(yearWeb, opts).then(res => {
+        // const { height, width } = res
+        const base64 = res.toDataURL('image/png', 1)
+        this.Download(base64, `yearWeb${num}.png`)
+      }, () => {
+        alert('截图失败，请重新尝试')
       })
     },
     cycle () {
-      var interval = setInterval(() => {
-        if (this.imageArray.length <= 0) {
-          clearInterval(interval)
-        } else {
-          let imageName = this.imageArray.pop()
-          this.image = require(`./../assets/year/${imageName}`)
-          this.save(this.imageArray.length)
-        }
-      }, 1500)
+      // var interval = setInterval(() => {
+      if (this.imageArray.length <= 0) {
+        return 0
+        // clearInterval(interval)
+      } else {
+        let imageName = this.imageArray.pop()
+        this.image = require(`./../assets/year/${imageName}`)
+        this.save(imageName)
+      }
+      // }, 1500)
     }
   }
 }

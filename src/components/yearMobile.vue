@@ -16,13 +16,14 @@ export default {
       message: '',
       number: 1,
       imageIndex: 0,
-      image: require(`./../assets/year/2910175.jpg`),
+      image: '',
       imageArray: []
     }
   },
   mounted () {
     const files = require.context('@/assets/year', false, /.jpg$/).keys()
     this.imageArray = files.map(item => item.replace('./', ''))
+    this.image = require(`./../assets/year/${this.imageArray[this.imageArray.length - 1]}`)
   },
   methods: {
     // 渲染图片
@@ -56,7 +57,7 @@ export default {
         html2canvas(yearMobile, opts).then(res => {
           // const { height, width } = res
           const base64 = res.toDataURL('image/png', 1)
-          this.Download(base64, `yearMobile${num}.png`)
+          this.Download(base64, `yearMobile-${num}`)
           resolve()
         }, () => {
           alert('截图失败，请重新尝试')
@@ -71,7 +72,7 @@ export default {
         } else {
           let imageName = this.imageArray.pop()
           this.image = require(`./../assets/year/${imageName}`)
-          this.save(this.imageArray.length)
+          this.save(imageName)
         }
       }, 1500)
     }
